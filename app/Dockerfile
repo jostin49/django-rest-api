@@ -1,21 +1,23 @@
-# pull official base image
-FROM python:3.9.6-alpine
+# imagen base oficial
+FROM python:3.10-slim
 
-# set work directory
+# directorio de trabajo
 WORKDIR /usr/src/app
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# variables de entorno
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# install psycopg2 dependencies
-RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev
-
-# install dependencies
-RUN pip install --upgrade pip
+# instalar dependencias (se copia primero requirements.txt para aprovechar la caché de capas)
+RUN pip install --no-cache-dir --upgrade pip
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# copy project
-COPY .. .
+# copiar el proyecto
+COPY . .
+
+EXPOSE 8000
+
+# el entrypoint espera a la base de datos, aplica migraciones y ejecuta el CMD
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

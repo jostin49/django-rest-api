@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   web:
     build: ./app
-    # Run unit tests and start the server
-    command: sh -c "python manage.py test && python manage.py runserver 0.0.0.0:8000"
+    # El ENTRYPOINT (entrypoint.sh) espera a la BD y aplica migraciones antes de este comando
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./app/:/usr/src/app/
     ports:
@@ -12,7 +10,8 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: postgres:13.0-alpine
     volumes:
@@ -21,6 +20,11 @@ services:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hello_django -d hello_django_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   postgres_data:

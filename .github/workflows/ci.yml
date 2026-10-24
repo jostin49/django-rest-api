@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main, ci-setup]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        # manage.py y requirements.txt viven dentro de app/
+        working-directory: app
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: app/requirements.txt
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar tests
+        # Sin variables SQL_* settings.py usa SQLite, no se necesita Postgres
+        run: python manage.py test
+
+  docker-build:
+    # Solo se construye la imagen si los tests pasan
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Construir la imagen Docker
+        run: docker build -t django-rest-api:${{ github.sha }} -t django-rest-api:latest ./app
+
+      - name: Levantar el sistema con Docker Compose
+        run: docker compose up --build -d
+
+      - name: Validar que el contenedor responde
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/ -o /dev/null; then
+              echo "Django responde correctamente en http://localhost:8000/"
+              exit 0
+            fi
+            echo "Esperando a Django... ($i/30)"
+            sleep 2
+          done
+          echo "Django no respondió a tiempo"
+          docker compose logs web
+          exit 1
+
+      - name: Evidencia - contenedores en ejecución
+        run: |
+          docker compose ps
+          echo "---- Respuesta de la API ----"
+          curl -s http://localhost:8000/api/users
+          echo
+          echo "---- Logs de Django ----"
+          docker compose logs web
+
+      - name: Guardar la imagen como artefacto (.tar)
+        run: docker save django-rest-api:latest -o django-rest-api-image.tar
+
+      - name: Subir artefacto a GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: django-rest-api-image
+          path: django-rest-api-image.tar
+          retention-days: 7
+
+      - name: Simular publicación en Docker Hub
+        # Simulado: solo muestra los comandos que se ejecutarían con credenciales reales
+        run: |
+          echo "[SIMULADO] docker login -u <usuario> -p <token>"
+          echo "[SIMULADO] docker tag django-rest-api:latest <usuario>/django-rest-api:latest"
+          echo "[SIMULADO] docker push <usuario>/django-rest-api:latest"
+
+      - name: Apagar el entorno
+        if: always()
+        run: docker compose down -v
