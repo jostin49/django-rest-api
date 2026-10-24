@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flujo CI/CD para Django - UNEMI</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #24292f;
+      line-height: 1.5;
+      font-size: 10.5pt;
+      margin: 0;
+      padding: 0;
+    }
+    .cover {
+      text-align: center;
+      padding: 40px 20px 30px;
+      border-bottom: 3px solid #0969da;
+      margin-bottom: 25px;
+      page-break-after: avoid;
+    }
+    .cover h1 {
+      font-size: 24pt;
+      color: #0969da;
+      margin: 10px 0 5px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .cover h2 {
+      font-size: 14pt;
+      color: #57606a;
+      font-weight: 400;
+      margin: 0 0 20px;
+    }
+    .meta-box {
+      display: inline-block;
+      text-align: left;
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 12px 25px;
+      font-size: 10pt;
+      margin-top: 10px;
+    }
+    .meta-box p {
+      margin: 4px 0;
+    }
+    h2.section-title {
+      font-size: 14pt;
+      color: #1f2328;
+      border-bottom: 1.5px solid #d0d7de;
+      padding-bottom: 5px;
+      margin-top: 25px;
+      margin-bottom: 12px;
+      page-break-after: avoid;
+    }
+    h3.subsection-title {
+      font-size: 11.5pt;
+      color: #0969da;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+    p {
+      margin: 6px 0;
+      text-align: justify;
+    }
+    ul, ol {
+      margin: 6px 0 10px 20px;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 7px 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f6f8fa;
+      font-weight: 600;
+      color: #24292f;
+    }
+    tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+    code {
+      font-family: Consolas, 'Courier New', Courier, monospace;
+      font-size: 9pt;
+      background: #eff1f3;
+      padding: 2px 4px;
+      border-radius: 4px;
+      color: #cf222e;
+    }
+    pre {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 6px;
+      padding: 10px;
+      font-family: Consolas, 'Courier New', Courier, monospace;
+      font-size: 8.5pt;
+      overflow-x: auto;
+      margin: 8px 0;
+      line-height: 1.35;
+      page-break-inside: avoid;
+    }
+    .alert-box {
+      background: #ddf4ff;
+      border-left: 4px solid #0969da;
+      padding: 10px 14px;
+      border-radius: 4px;
+      margin: 12px 0;
+      font-size: 9.5pt;
+    }
+    .badge-success {
+      background: #dafbe1;
+      color: #1a7f37;
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 8.5pt;
+      display: inline-block;
+    }
+    .diagram-container {
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+    .diagram-flow {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .flow-node {
+      background: #f6f8fa;
+      border: 1.5px solid #0969da;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 8.5pt;
+      font-weight: 600;
+      color: #0969da;
+      min-width: 95px;
+      text-align: center;
+    }
+    .flow-arrow {
+      font-size: 14pt;
+      color: #57606a;
+      font-weight: bold;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PORTADA -->
+  <div class="cover">
+    <div style="font-size: 11pt; font-weight: 600; color: #57606a; text-transform: uppercase; letter-spacing: 1px;">
+      Universidad Estatal de Milagro (UNEMI)
+    </div>
+    <h1>Flujo CI/CD para Django</h1>
+    <h2>Automatización, Contenedorización con Docker y Entrega Continua</h2>
+    <div class="meta-box">
+      <p><strong>Materia:</strong> Gestión de Proyectos de Software</p>
+      <p><strong>Proyecto:</strong> Django REST API (PostgreSQL + Docker + GitHub Actions)</p>
+      <p><strong>Repositorio GitHub:</strong> https://github.com/jostin49/django-rest-api</p>
+      <p><strong>Rama:</strong> <code>ci-setup</code> / <code>main</code></p>
+      <p><strong>Fecha de Validación:</strong> Octubre 2026</p>
+    </div>
+  </div>
+
+  <!-- INTRODUCCIÓN -->
+  <h2 class="section-title">1. Resumen Ejecutivo del Proyecto</h2>
+  <p>
+    El presente informe documenta la implementación integral de un pipeline de Integración y Entrega Continua (CI/CD) para una aplicación backend basada en <strong>Django 4.2</strong> y <strong>Django REST Framework (DRF)</strong> con base de datos <strong>PostgreSQL 13</strong>, orquestada mediante <strong>Docker</strong> y automatizada en la nube a través de <strong>GitHub Actions</strong>.
+  </p>
+  <p>
+    El ciclo implementado abarca la verificación estructural, ejecución autónoma de 28 pruebas unitarias, construcción y optimización de imagen Docker multi-capa, validación de salud de contenedores en tiempo de ejecución, empaquetado de artefactos versionados y simulación de despliegue en entornos limpios.
+  </p>
+
+  <!-- SESIÓN 1 -->
+  <h2 class="section-title">2. Sesión 1: Preparación del Entorno CI</h2>
+  <h3 class="subsection-title">2.1 Auditoría y Verificación de Componentes</h3>
+  <p>Se auditó la arquitectura del proyecto comprobando la existencia y validez de los módulos principales:</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Requisito</th>
+        <th>Ubicación en el Proyecto</th>
+        <th>Estado / Observación</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>manage.py</code></td>
+        <td><code>app/manage.py</code></td>
+        <td><span class="badge-success">OPERATIVO</span> Utilidad CLI de Django</td>
+      </tr>
+      <tr>
+        <td>Configuración (<code>project/</code>)</td>
+        <td><code>app/django-rest-api/</code></td>
+        <td><span class="badge-success">OPERATIVO</span> Contiene <code>settings.py</code>, <code>urls.py</code>, <code>wsgi.py</code></td>
+      </tr>
+      <tr>
+        <td>Aplicación (<code>app/</code>)</td>
+        <td><code>app/api/</code></td>
+        <td><span class="badge-success">OPERATIVO</span> Contiene modelos, vistas, serializadores y rutas</td>
+      </tr>
+      <tr>
+        <td>Dependencias</td>
+        <td><code>app/requirements.txt</code></td>
+        <td><span class="badge-success">OPERATIVO</span> Django 4.2, DRF 3.14, drf-yasg, psycopg2-binary</td>
+      </tr>
+      <tr>
+        <td>Suite de Pruebas</td>
+        <td><code>app/api/tests.py</code></td>
+        <td><span class="badge-success">OPERATIVO</span> 28 pruebas unitarias (GET, POST, PUT, DELETE, Docs)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 class="subsection-title">2.2 Primer Pipeline de CI (Ejecución de Tests)</h3>
+  <p>
+    Se creó la rama <code>ci-setup</code> y el archivo <code>.github/workflows/ci.yml</code> para ejecutar las pruebas con Python 3.10. El job configuró caché de dependencias e invocó <code>python manage.py test</code>, logrando la ejecución de 28 pruebas exitosas sin errores en un tiempo inferior a 15 segundos.
+  </p>
+
+  <!-- SESIÓN 2 -->
+  <div class="page-break"></div>
+  <h2 class="section-title">3. Sesión 2: Automatización del Build con Docker</h2>
+  <h3 class="subsection-title">3.1 Dockerfile Optimizado con ENTRYPOINT</h3>
+  <p>
+    Se refactorizó el archivo <code>app/Dockerfile</code> para basarse en <strong>python:3.10-slim</strong>, optimizando el tamaño de la imagen y ordenando el copiado de capas para aprovechar el caché de Docker.
+  </p>
+  <pre>FROM python:3.10-slim
+WORKDIR /usr/src/app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+RUN pip install --no-cache-dir --upgrade pip
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+EXPOSE 8000
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]</pre>
+
+  <p>
+    Se incorporó <code>app/entrypoint.sh</code>, el cual realiza una verificación de socket TCP para esperar la disponibilidad de PostgreSQL antes de aplicar migraciones (<code>python manage.py migrate --noinput</code>) y levantar el servidor.
+  </p>
+
+  <h3 class="subsection-title">3.2 Orquestación con Docker Compose</h3>
+  <p>
+    El archivo <code>docker-compose.yml</code> integra el servicio de aplicación web (Django) y el servicio de base de datos relacional (PostgreSQL 13 Alpine) con <code>healthcheck</code> estricto (<code>pg_isready</code>) y volúmenes de datos persistentes:
+  </p>
+  <pre>services:
+  web:
+    build: ./app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=hello_django_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hello_django -d hello_django_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10</pre>
+
+  <!-- SESIÓN 3 & 4 -->
+  <h2 class="section-title">4. Sesiones 3 y 4: Pipeline Completo de CI/CD y Validación</h2>
+
+  <h3 class="subsection-title">4.1 Diagrama de Arquitectura del Pipeline</h3>
+  <div class="diagram-container">
+    <div style="font-weight: 600; color: #57606a; margin-bottom: 10px; font-size: 9pt;">FLUJO DE EJECUCIÓN CONTINUA (GITHUB ACTIONS)</div>
+    <div class="diagram-flow">
+      <div class="flow-node">1. Git Push<br><small>ci-setup / main</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">2. Job: Test<br><small>Python 3.10</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">3. Quality Gate<br><small>28 Tests OK</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">4. Docker Build<br><small>python:3.10-slim</small></div>
+    </div>
+    <div class="diagram-flow" style="margin-top: 15px;">
+      <div class="flow-node">5. Compose Up<br><small>web + postgres</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">6. Healthcheck<br><small>curl :8000 (200)</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">7. Artefacto<br><small>.tar en GitHub</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-node">8. Despliegue<br><small>Simulado</small></div>
+    </div>
+  </div>
+
+  <h3 class="subsection-title">4.2 Resultados de Ejecución en GitHub Actions</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Job</th>
+        <th>Pasos Clave Ejecutados</th>
+        <th>Resultado</th>
+        <th>Tiempo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>test</strong></td>
+        <td>Checkout, Setup Python 3.10, Pip Cache, Install deps, Run <code>manage.py test</code></td>
+        <td><span class="badge-success">SUCCESS</span> (28/28 OK)</td>
+        <td>13s</td>
+      </tr>
+      <tr>
+        <td><strong>docker-build</strong></td>
+        <td>Build image, Compose Up, Healthcheck Curl HTTP 200, Export .tar, Upload Artifact v4, Docker Hub Sim</td>
+        <td><span class="badge-success">SUCCESS</span> (0 errores)</td>
+        <td>42s</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert-box">
+    <strong>Evidencia en vivo:</strong> La ejecución oficial en GitHub Actions finalizó con estado exitoso. Se generó el artefacto descargable <code>django-rest-api-image</code> en la plataforma y el endpoint respondió con código HTTP 200 OK.
+  </div>
+
+  <!-- SESIÓN 4: RECOMENDACIONES -->
+  <div class="page-break"></div>
+  <h2 class="section-title">5. Recomendaciones Finales de Ingeniería de Software</h2>
+
+  <h3 class="subsection-title">5.1 Seguridad y Gestión de Secretos</h3>
+  <ul>
+    <li><strong>Aislamiento de Credenciales:</strong> Migrar credenciales de base de datos y la clave <code>SECRET_KEY</code> hacia <em>GitHub Actions Secrets</em> (<code>${{ secrets.SECRET_KEY }}</code>) y no versionar archivos <code>.env</code> en repositorios públicos.</li>
+    <li><strong>Ejecución sin Privilegios (Non-Root User):</strong> Declarar un usuario de sistema dedicado en el Dockerfile (ej. <code>RUN adduser -D appuser && USER appuser</code>) para prevenir vulnerabilidades de elevación de privilegios en el host.</li>
+    <li><strong>Ajustes de Producción:</strong> Inhabilitar modo de depuración (<code>DEBUG=0</code>) y configurar <code>ALLOWED_HOSTS</code> con los nombres de dominio de producción autorizados.</li>
+  </ul>
+
+  <h3 class="subsection-title">5.2 Arquitectura y Rendimiento</h3>
+  <ul>
+    <li><strong>Servidor de Aplicaciones WSGI/ASGI:</strong> Sustituir <code>python manage.py runserver</code> (diseñado únicamente para desarrollo) por servidores robustos y multi-hilo como <strong>Gunicorn</strong> o <strong>Uvicorn</strong>.</li>
+    <li><strong>Multi-Stage Builds:</strong> Adoptar compilación en múltiples etapas en Docker para descartar compiladores y reducir el tamaño final de la imagen a menos de 150 MB.</li>
+    <li><strong>Calidad Estática de Código:</strong> Añadir linters automatizados como <strong>Ruff</strong> o <strong>Flake8</strong> en el pipeline antes de la fase de pruebas para garantizar el cumplimiento del estándar PEP 8.</li>
+  </ul>
+
+  <h2 class="section-title">6. Conclusión</h2>
+  <p>
+    El proyecto <strong>django-rest-api</strong> cuenta con un pipeline moderno, robusto y automatizado que cumple con los estándares de la industria para Integración y Entrega Continua. Se garantiza que cada cambio en el código fuente sea validado rigurosamente mediante pruebas automatizadas, empaquetado en contenedores portables e inmunes a inconsistencias de entorno, y preparado para despliegues confiables en producción.
+  </p>
+
+</body>
+</html>
